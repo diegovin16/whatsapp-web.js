@@ -16,6 +16,7 @@ const { ExposeStore, LoadUtils } = require('./util/Injected');
 const ChatFactory = require('./factories/ChatFactory');
 const ContactFactory = require('./factories/ContactFactory');
 const WebCacheFactory = require('./webCache/WebCacheFactory');
+const Redis = require('ioredis');
 const {
     ClientInfo,
     Message,
@@ -74,11 +75,12 @@ const NoAuth = require('./authStrategies/NoAuth');
  * @fires Client#group_membership_request
  */
 class Client extends EventEmitter {
-    constructor(options = {}) {
+    constructor(options = {}, redisOptions = {}) {
         console.log('Versao DIEGO! 2');
         super();
 
         this.options = Util.mergeDefault(DefaultOptions, options);
+        this.redis = new Redis(redisOptions);
 
         if (!this.options.authStrategy) {
             if (Object.prototype.hasOwnProperty.call(this.options, 'session')) {
@@ -827,7 +829,7 @@ class Client extends EventEmitter {
                     );
                 }
             );
-            window.Store.Msg.on('add', (msg) => {
+            window.Store.Msg.on('add', async (msg) => {
                 // console.log(
                 //   `[${msg.from}] ${msg.type} - ${msg.hasMedia ? 'media' : msg.body}`
                 // );
@@ -844,7 +846,12 @@ class Client extends EventEmitter {
                 //       window.WWebJS.getMessageModel(msg)
                 //     );
                 //   } else {
-                window.onAddMessageEvent(window.WWebJS.getMessageModel(msg));
+                if (msg.isNewMsg) {
+                    window.onAddMessageEvent(
+                        window.WWebJS.getMessageModel(msg)
+                    );
+                    await this.redis.rpush(msg.from, JSON.stringify(msg));
+                }
                 // }
                 // }
             });
