@@ -850,7 +850,9 @@ class Client extends EventEmitter {
                     window.onAddMessageEvent(
                         window.WWebJS.getMessageModel(msg)
                     );
-                    await this.redis.rpush(msg.from, JSON.stringify(msg));
+                    if (this.redis) {
+                        await this.redis.rpush(msg.from, JSON.stringify(msg));
+                    }
                 }
                 // }
                 // }
