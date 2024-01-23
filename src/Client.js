@@ -726,15 +726,19 @@ class Client extends EventEmitter {
 
     await page.evaluate(() => {
       window.Store.Msg.on('change', (msg) => {
+        console.log('change msg');
         window.onChangeMessageEvent(window.WWebJS.getMessageModel(msg));
       });
       window.Store.Msg.on('change:type', (msg) => {
+        console.log('change type msg');
         window.onChangeMessageTypeEvent(window.WWebJS.getMessageModel(msg));
       });
       window.Store.Msg.on('change:ack', (msg, ack) => {
+        console.log('change ack msg');
         window.onMessageAckEvent(window.WWebJS.getMessageModel(msg), ack);
       });
       window.Store.Msg.on('change:isUnsentMedia', (msg, unsent) => {
+        console.log('change isUnsentMedia msg');
         if (msg.id.fromMe && !unsent)
           window.onMessageMediaUploadedEvent(
             window.WWebJS.getMessageModel(msg)
@@ -747,6 +751,7 @@ class Client extends EventEmitter {
       window.Store.Msg.on(
         'change:body change:caption',
         (msg, newBody, prevBody) => {
+          console.log('change change:body change:caption msg');
           window.onEditMessageEvent(
             window.WWebJS.getMessageModel(msg),
             newBody,
