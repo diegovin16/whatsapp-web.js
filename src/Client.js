@@ -777,6 +777,9 @@ class Client extends EventEmitter {
         }
       );
       window.Store.Msg.on('add', (msg) => {
+        console.log(
+          `[${msg.from}] ${msg.type} - ${msg.hasMedia ? 'media' : msg.body}`
+        );
         if (msg.isNewMsg) {
           if (msg.type === 'ciphertext') {
             // defer message event until ciphertext is resolved (type changed)
