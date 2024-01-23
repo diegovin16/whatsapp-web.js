@@ -75,7 +75,7 @@ const NoAuth = require('./authStrategies/NoAuth');
  */
 class Client extends EventEmitter {
   constructor(options = {}) {
-    console.log('Versao DIEGO!');
+    console.log('Versao DIEGO! 2');
     super();
 
     this.options = Util.mergeDefault(DefaultOptions, options);
